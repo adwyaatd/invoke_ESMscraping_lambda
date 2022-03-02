@@ -3,7 +3,7 @@
 const axios = require('axios')
 const url = 'http://checkip.amazonaws.com/';
 
-let response = null;
+const response = null;
 
 /**
  *
@@ -17,27 +17,33 @@ let response = null;
  * @returns {Object} object - API Gateway Lambda Proxy Output Format
  * 
  */
-exports.lambdaHandler = async (event, context) => {
+async function main(event, context) {
   try {
     const ret = await handle(event, context);
-    // const test = {
-    //   "no1": 1,
-    //   "no2": 2,
-    //   "no3": 3
-    // }
-    // process.stdout.write(JSON.stringify(test, null, 2));
+    console.log(ret);
+
+    const test = {
+      "no1": 1,
+      "no2": 2,
+      "no3": 3
+    }
+    console.log(typeof test);
+    console.log(JSON.stringify(test, null, 2));
     const ret2 = await axios(url);
+    console.log(typeof ret2);
+    console.log(JSON.stringify(ret2, null, 2));
     response = {
       'statusCode': 200,
       'body': JSON.stringify({
         message: ret,
-        location: ret2.data.trim()
+        message: ret2
+        // location: ret.data.trim()
       })
     }
   } catch (err) {
     console.log("error======");
-    console.err(`err: ${err}`);
-    process.stdout.write(`\n ${err}`);
+    console.log(`err: ${err}`);
+    console.log(`err type: ${typeof err}`);
     console.log("error======");
     return err;
   }
@@ -63,6 +69,9 @@ function sendSQS(keywords, domains) {
 async function handle(event, context) {
   // const headers = event.headers;
   // const body = JSON.parse(event.body);
+  console.log('event');
+  console.log(`event: ${typeof event}`);
+  console.log(`event: ${JSON.stringify(event)}`);
 
   // 検索キーワードをDBから取得
   const keywords = fetchKeywords();
@@ -77,3 +86,5 @@ async function handle(event, context) {
   // 登録完了したらレスポンスを返す
   return ret;
 }
+
+main();
